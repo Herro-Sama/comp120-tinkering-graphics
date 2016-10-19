@@ -11,7 +11,7 @@ Height = 600
 
 window = pygame.display.set_mode((Width, Height), 0, 32)
 
-pygame.display.set_caption('It\'s High Noon!')
+pygame.display.set_caption('')
 
 Black = (0, 0, 0)
 White = (255, 255, 255)
