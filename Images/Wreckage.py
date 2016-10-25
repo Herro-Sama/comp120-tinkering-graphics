@@ -56,6 +56,18 @@ class Ball:
             self.speed_x = random.randrange (-10, 0)
             self.speed_y = random.randrange (-10, 0)
 
+
+    def resize(self):
+        if keys_pressed[K_d]:
+            self.radius = self.radius + 1
+        if keys_pressed[K_a]:
+            self.radius = self.radius - 1
+
+        if self.radius >= 6:
+            self.radius = 5
+        if self.radius <= 0:
+            self.radius = 1
+
     def draw(self):
         print "This should never be called"
 
@@ -66,13 +78,8 @@ class CircleBall(Ball):
         radius = self.radius
         pygame.draw.circle(screen, self.colour, (pos_x, pos_y), radius)
 
-    def resize(self):
-        self.radius -= 1
-        if self.radius < 1:
-            self.radius = random.randrange(5,10)
-
 class Background(pygame.sprite.Sprite):
-    def __init__(self, image_file,location):
+    def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
@@ -92,7 +99,7 @@ BackGround = Background('wreckage.jpg', [0,0])
 balls = []
 
 # Create balls
-num_balls = 1500
+num_balls = 3000
 for ball_index in xrange(num_balls):
     shape = random.choice([CircleBall])
     new_ball = shape()
@@ -101,6 +108,7 @@ Black = (0,0,0)
 
 # Main loop
 running = True
+On = True
 while running:
 
     screen.fill(Black)
