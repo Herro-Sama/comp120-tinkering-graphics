@@ -10,14 +10,18 @@ class Ball:
         # Choose a random speed
         self.speed_x = random.randrange(-5, 5)
         self.speed_y = random.randrange(-5, 5)
+        if self.speed_x == 0:
+            self.speed_x = 5
+        if self.speed_y == 0:
+            self.speed_y = 5
 
         # Choose a random size
-        self.radius = random.randrange(2, 20)
+        self.radius = random.randrange(1, 2)
 
         # Choose a random colour
-        red = random.randrange(180, 255)
-        green = random.randrange(50, 60)
-        blue = random.randrange(0, 90)
+        red = random.randrange(244, 245)
+        green = random.randrange(164, 165)
+        blue = random.randrange(96, 97)
         self.colour = (red, green, blue)
 
     def update(self):
@@ -84,7 +88,7 @@ BackGround = Background('wreckage.jpg', [0,0])
 balls = []
 
 # Create balls
-num_balls = 100
+num_balls = 1500
 for ball_index in xrange(num_balls):
     shape = random.choice([CircleBall])
     new_ball = shape()
@@ -92,10 +96,10 @@ for ball_index in xrange(num_balls):
 
 # Main loop
 running = True
-
-screen.blit(BackGround.image, BackGround.rect)
-
 while running:
+    screen.blit(BackGround.image, BackGround.rect)
+
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -104,7 +108,6 @@ while running:
     for ball in balls:
         ball.draw()
         ball.update()
-        object.blit(ball)
     # Flip the display and regulate the frame rate
     pygame.display.flip()
     clock.tick(120)
