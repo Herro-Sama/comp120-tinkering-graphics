@@ -1,5 +1,5 @@
-import pygame
-import random
+import pygame, sys, random, time
+from pygame.locals import *
 
 class Ball:
     def __init__(self):
@@ -8,21 +8,31 @@ class Ball:
         self.pos_y = random.randrange(0, window_height)
 
         # Choose a random speed
-        self.speed_x = random.randrange(-5, 5)
-        self.speed_y = random.randrange(-5, 5)
+        self.speed_x = random.randrange(-10, 10)
+        self.speed_y = random.randrange(-10, 10)
         if self.speed_x == 0:
-            self.speed_x = 5
+            self.speed_x = random.randrange(-10, 10)
+        if self.speed_x > 11:
+            self.speed_x = random.randrange(-10, 10)
+        if self.speed_x < -11:
+            self.speed_x = random.randrange(-10, 10)
         if self.speed_y == 0:
-            self.speed_y = 5
+            self.speed_y = random.randrange(-10, 10)
+        if self.speed_y > 11:
+            self.speed_y = random.randrange(-10, 10)
+        if self.speed_y < -11:
+            self.speed_y = random.randrange(-10, 10)
 
         # Choose a random size
-        self.radius = random.randrange(1, 2)
+        self.radius = random.randrange(1,3)
 
         # Choose a random colour
-        red = random.randrange(244, 245)
-        green = random.randrange(164, 165)
-        blue = random.randrange(96, 97)
-        self.colour = (red, green, blue)
+        Brown1 = (244,164,96)
+        Brown2 = (210,180,140)
+        Brown3 = (222,184,135)
+        Brown4 = (255,228,196)
+        Colour = [Brown1,Brown2,Brown3,Brown4]
+        self.colour = (random.choice(Colour))
 
     def update(self):
         self.pos_x += self.speed_x
@@ -30,17 +40,32 @@ class Ball:
 
         # Bounce off the walls
         if self.pos_x < 0:
-            self.pos_x += window_width
+            self.pos_x = window_width
         if self.pos_x > window_width:
-            self.pos_x -= 0
+            self.pos_x = 0
 
         if self.pos_y < 0:
-            self.pos_y += window_height
+            self.pos_y = window_height
         if self.pos_y > window_height:
-            self.pos_y -= 0
+            self.pos_y = 0
+
+        if keys_pressed[K_s]:
+            self.speed_x = random.randrange (1, 10)
+            self.speed_y = random.randrange (1, 10)
+
+        if keys_pressed[K_w]:
+            self.speed_x = random.randrange (-10, 0)
+            self.speed_y = random.randrange (-10, 0)
+
+
+
 
     def draw(self):
         print "This should never be called"
+
+    def resize(self):
+        time.sleep(6)
+        self.radius = random.randrange(1,8)
 
 
 class SquareBall(Ball):
@@ -79,7 +104,7 @@ class Background(pygame.sprite.Sprite):
 pygame.init()
 clock = pygame.time.Clock()
 
-window_width = 800
+window_width = 1280
 window_height = 600
 window_size = (window_width, window_height)
 screen = pygame.display.set_mode(window_size)
@@ -93,12 +118,15 @@ for ball_index in xrange(num_balls):
     shape = random.choice([CircleBall])
     new_ball = shape()
     balls.append(new_ball)
+Black = (0,0,0)
 
 # Main loop
 running = True
+Timing = True
 while running:
+    screen.fill(Black)
     screen.blit(BackGround.image, BackGround.rect)
-
+    keys_pressed = pygame.key.get_pressed()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -108,6 +136,10 @@ while running:
     for ball in balls:
         ball.draw()
         ball.update()
+
+    while Timing:
+        for ball in balls:
+            ball.rezise()
     # Flip the display and regulate the frame rate
     pygame.display.flip()
     clock.tick(120)
