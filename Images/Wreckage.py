@@ -24,7 +24,7 @@ class Ball:
             self.speed_y = random.randrange(-10, 10)
 
         # Choose a random size
-        self.radius = random.randrange(1,3)
+        self.radius = random.randrange(1,6)
 
         # Choose a random colour
         Brown1 = (244,164,96)
@@ -52,30 +52,12 @@ class Ball:
         if keys_pressed[K_s]:
             self.speed_x = random.randrange (1, 10)
             self.speed_y = random.randrange (1, 10)
-
         if keys_pressed[K_w]:
             self.speed_x = random.randrange (-10, 0)
             self.speed_y = random.randrange (-10, 0)
 
-
-
-
     def draw(self):
         print "This should never be called"
-
-    def resize(self):
-        time.sleep(6)
-        self.radius = random.randrange(1,8)
-
-
-class SquareBall(Ball):
-    def draw(self):
-        pos_x = self.pos_x
-        pos_y = self.pos_y
-        radius = self.radius
-        rect = (pos_x - radius, pos_y - radius, 2 * radius, 2 * radius)
-        pygame.draw.rect(screen, self.colour, rect)
-
 
 class CircleBall(Ball):
     def draw(self):
@@ -84,14 +66,10 @@ class CircleBall(Ball):
         radius = self.radius
         pygame.draw.circle(screen, self.colour, (pos_x, pos_y), radius)
 
-
-class TriangleBall(Ball):
-    def draw(self):
-        pos_x = self.pos_x
-        pos_y = self.pos_y
-        radius = self.radius
-        points = [(pos_x - radius, pos_y + radius), (pos_x, pos_y - radius), (pos_x + radius, pos_y + radius)]
-        pygame.draw.polygon(screen, self.colour, points)
+    def resize(self):
+        self.radius -= 1
+        if self.radius < 1:
+            self.radius = random.randrange(5,10)
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, image_file,location):
@@ -99,6 +77,7 @@ class Background(pygame.sprite.Sprite):
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
         self.rect.left, self.rect.top = location
+
 
 # Initialise PyGame
 pygame.init()
@@ -122,8 +101,8 @@ Black = (0,0,0)
 
 # Main loop
 running = True
-Timing = True
 while running:
+
     screen.fill(Black)
     screen.blit(BackGround.image, BackGround.rect)
     keys_pressed = pygame.key.get_pressed()
@@ -136,10 +115,8 @@ while running:
     for ball in balls:
         ball.draw()
         ball.update()
+        ball.resize()
 
-    while Timing:
-        for ball in balls:
-            ball.rezise()
     # Flip the display and regulate the frame rate
     pygame.display.flip()
-    clock.tick(120)
+    clock.tick(60)
