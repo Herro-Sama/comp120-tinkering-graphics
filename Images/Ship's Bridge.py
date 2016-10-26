@@ -1,4 +1,4 @@
-import pygame, sys, random, time
+import pygame, sys, random, time, math
 from pygame.locals import *
 
 class Ball:
@@ -7,9 +7,11 @@ class Ball:
         self.pos_x = random.randrange(350, 450)
         self.pos_y = random.randrange(250, 350)
 
+        speed = [-10,-5,5,10]
+
         # Choose a random speed
-        self.speed_x = random.randrange(-10, 10)
-        self.speed_y = random.randrange(-10, 10)
+        self.speed_x = random.choice(speed)
+        self.speed_y = random.choice(speed)
         if self.speed_x == 0:
             self.speed_x = random.randrange(-10, 10)
         if self.speed_x > 11:
@@ -22,6 +24,7 @@ class Ball:
             self.speed_y = random.randrange(-10, 10)
         if self.speed_y < -11:
             self.speed_y = random.randrange(-10, 10)
+
 
         # Choose a random size
         self.radius = random.randrange(1,5)
@@ -36,70 +39,93 @@ class Ball:
         self.colour = (random.choice(Colour))
 
     def update(self):
+
+        Tie = pygame.image.load('Tie.gif')
+        Xwing = pygame.image.load('Xwing.png')
+
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
 
         # Bounce off the walls
         if self.pos_x < 0:
-            self.pos_x = random.randrange(350, 450)
+            self.pos_x = window_width
         if self.pos_x > window_width:
-            self.pos_x = random.randrange(350, 450)
+            self.pos_x = 0
 
         if self.pos_y < 0:
-            self.pos_y = random.randrange(250, 350)
+            self.pos_y = window_height
         if self.pos_y > window_height:
-            self.pos_y = random.randrange(250, 350)
+            self.pos_y = 0
 
-        if keys_pressed[K_s]:
-            self.speed_x = random.randrange (-10, 10)
-            self.speed_y = random.randrange (-10, 10)
-
-        if self.speed_x and self.speed_y >= 1:
-            self.image = pygame.transform.rotate(self.image, 45)
-
+        screen.blit(Tie,(self.pos_x,self.pos_y))
+        screen.blit(Xwing, (self.pos_x - 60, self.pos_y - 60))
 
     def draw(self):
         print "This should never be called"
 
-class CircleBall(Ball):
+class Tie(Ball):
     def draw(self):
         pos_x = self.pos_x
         pos_y = self.pos_y
         width = self.radius
         height = self.height
-        self.image = pygame.draw.rect(screen, self.colour, (pos_x, pos_y, width, height ))
+        Tie = pygame.image.load('Tie.gif')
 
-    def resize(self):
-        self.radius -= 1
-        if self.radius < 1:
-            self.radius = random.randrange(5,10)
-
-class Background(pygame.sprite.Sprite):
-    def __init__(self, image_file,location):
-        pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
-        self.image = pygame.image.load(image_file)
-        self.rect = self.image.get_rect()
-        self.rect.left, self.rect.top = location
+class Xwing(Ball):
+    def draw(self):
+        pos_x = self.pos_x
+        pos_y = self.pos_y
+        width = self.radius
+        height = self.height
+        Xwing = pygame.image.load('Xwing.png')
 
 
-# Initialise PyGame
+
+def Gbolt(screen):
+    for Y in xrange(window_height):
+        for X in xrange(window_width):
+            Red = screen.get_at((X, Y)).r
+            Green = screen.get_at((X, Y)).g
+            Blue = screen.get_at((X, Y)).b
+            pxarray[X, Y] = (Red/2, 255, Blue/2)
+
+def Bbolt(screen):
+    for Y in xrange(window_height):
+        for X in xrange(window_width):
+            Red = screen.get_at((X, Y)).r
+            Green = screen.get_at((X, Y)).g
+            Blue = screen.get_at((X, Y)).b
+            pxarray[X, Y] = (Red/2, Green/2, 255)
+
+def Rbolt(screen):
+    for Y in xrange(window_height):
+        for X in xrange(window_width):
+            Red = screen.get_at((X, Y)).r
+            Green = screen.get_at((X, Y)).g
+            Blue = screen.get_at((X, Y)).b
+            pxarray[X, Y] = (255, Green/2, Blue/2)
+
+
 pygame.init()
 clock = pygame.time.Clock()
 
 window_width = 800
 window_height = 600
+imgX = 0
+imgY = 0
 window_size = (window_width, window_height)
-screen = pygame.display.set_mode(window_size)
-BackGround = Background('ShipBridge.png', [0,0])
+screen = pygame.display.set_mode(window_size,0,24)
+BackGround = pygame.image.load('ShipBridge.png')
 # Initialise lists for ball data
 balls = []
 
 # Create balls
-num_balls = 100
+num_balls = 10
 for ball_index in xrange(num_balls):
-    shape = random.choice([CircleBall])
+    shape = random.choice([Tie,Xwing])
     new_ball = shape()
     balls.append(new_ball)
+
 Black = (0,0,0)
 
 # Main loop
@@ -112,15 +138,29 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
     # Clear the screen to black
     for ball in balls:
         ball.draw()
         ball.update()
-        ball.resize()
+
+    screen.blit(BackGround,(imgX,imgY))
+    imgX = 0
+    imgY = 0
+    pxarray = pygame.PixelArray(screen)
+    if keys_pressed[K_SPACE]:
+        imgY += 5
+
+    if keys_pressed[K_UP]:
+        Gbolt(BackGround)
+
+    if keys_pressed[K_RIGHT]:
+        Bbolt(BackGround)
+
+    if keys_pressed[K_DOWN]:
+        Rbolt(BackGround)
 
 
-    screen.blit(BackGround.image, BackGround.rect)
-    # Flip the display and regulate the frame rate
-    pygame.display.flip()
+
+    del pxarray
+    pygame.display.update()
     clock.tick(60)
