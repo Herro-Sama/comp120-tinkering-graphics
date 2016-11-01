@@ -10,6 +10,8 @@ class Ball:
         # Choose a random speed
         self.speed_x = random.randrange(-10, 10)
         self.speed_y = random.randrange(-10, 10)
+
+        # Prevent balls from being stationary or too fast
         if self.speed_x == 0:
             self.speed_x = random.randrange(-10, 10)
         if self.speed_x > 11:
@@ -26,7 +28,7 @@ class Ball:
         # Choose a random size
         self.radius = random.randrange(1,6)
 
-        # Choose a random colour
+        # Choose a colour from the list
         Brown1 = (244,164,96)
         Brown2 = (210,180,140)
         Brown3 = (222,184,135)
@@ -38,17 +40,19 @@ class Ball:
         self.pos_x += self.speed_x
         self.pos_y += self.speed_y
 
-        # Bounce off the walls
+        # Transfer position x to opposite side of the screen
         if self.pos_x < 0:
             self.pos_x = window_width
         if self.pos_x > window_width:
             self.pos_x = 0
 
+        # Transfer position y to opposite side of the screen
         if self.pos_y < 0:
             self.pos_y = window_height
         if self.pos_y > window_height:
             self.pos_y = 0
 
+        # Unify the direction balls are traveling
         if keys_pressed[K_s]:
             self.speed_x = random.randrange (1, 10)
             self.speed_y = random.randrange (1, 10)
@@ -56,23 +60,32 @@ class Ball:
             self.speed_x = random.randrange (-10, 0)
             self.speed_y = random.randrange (-10, 0)
 
+    # Test code to try resize balls
+    def resize(self):
+        if keys_pressed[K_d]:
+            self.radius = self.radius + 1
+        if keys_pressed[K_a]:
+            self.radius = self.radius - 1
+
+        if self.radius >= 6:
+            self.radius = 5
+        if self.radius <= 0:
+            self.radius = 1
+
     def draw(self):
         print "This should never be called"
 
-class CircleBall(Ball):
+# Draw the particles on the screen
+class Particle(Ball):
     def draw(self):
         pos_x = self.pos_x
         pos_y = self.pos_y
         radius = self.radius
         pygame.draw.circle(screen, self.colour, (pos_x, pos_y), radius)
 
-    def resize(self):
-        self.radius -= 1
-        if self.radius < 1:
-            self.radius = random.randrange(5,10)
-
+# Create background image
 class Background(pygame.sprite.Sprite):
-    def __init__(self, image_file,location):
+    def __init__(self, image_file, location):
         pygame.sprite.Sprite.__init__(self)  # call Sprite initializer
         self.image = pygame.image.load(image_file)
         self.rect = self.image.get_rect()
@@ -91,10 +104,10 @@ BackGround = Background('wreckage.jpg', [0,0])
 # Initialise lists for ball data
 balls = []
 
-# Create balls
-num_balls = 1500
-for ball_index in xrange(num_balls):
-    shape = random.choice([CircleBall])
+# Create particles
+num_particles = 3000
+for ball_index in xrange(num_particles):
+    shape = random.choice([Particle])
     new_ball = shape()
     balls.append(new_ball)
 Black = (0,0,0)
@@ -102,7 +115,7 @@ Black = (0,0,0)
 # Main loop
 running = True
 while running:
-
+    # Add background image and activate key presses
     screen.fill(Black)
     screen.blit(BackGround.image, BackGround.rect)
     keys_pressed = pygame.key.get_pressed()
