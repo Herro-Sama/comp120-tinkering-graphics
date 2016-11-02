@@ -1,7 +1,7 @@
 import pygame, sys, random, time, math
 from pygame.locals import *
 
-class Ball:
+class ImageGen:
     def __init__(self):
         # Choose a random position
         self.pos_x = random.randrange(350, 450)
@@ -63,7 +63,7 @@ class Ball:
     def draw(self):
         print "This should never be called"
 
-class Tie(Ball):
+class Tie(ImageGen):
     def draw(self):
         pos_x = self.pos_x
         pos_y = self.pos_y
@@ -71,7 +71,7 @@ class Tie(Ball):
         height = self.height
         Tie = pygame.image.load('Tie.gif')
 
-class Xwing(Ball):
+class Xwing(ImageGen):
     def draw(self):
         pos_x = self.pos_x
         pos_y = self.pos_y
@@ -117,14 +117,14 @@ window_size = (window_width, window_height)
 screen = pygame.display.set_mode(window_size,0,24)
 BackGround = pygame.image.load('ShipBridge.png')
 # Initialise lists for ball data
-balls = []
+ImageList = []
 
-# Create balls
-num_balls = 10
-for ball_index in xrange(num_balls):
+# Create ImageList
+num_ImageList = 10
+for Tie_index in xrange(num_ImageList):
     shape = random.choice([Tie,Xwing])
-    new_ball = shape()
-    balls.append(new_ball)
+    new_Image = shape()
+    ImageList.append(new_Image)
 
 Black = (0,0,0)
 
@@ -132,23 +132,22 @@ Black = (0,0,0)
 running = True
 while running:
 
+    # Clear the screen to black
     screen.fill(Black)
-    keys_pressed = pygame.key.get_pressed()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    # Clear the screen to black
-    for ball in balls:
-        ball.draw()
-        ball.update()
 
-    screen.blit(BackGround,(imgX,imgY))
+    for Xwing in ImageList:
+        Xwing.draw()
+        Xwing.update()
+
     imgX = 0
     imgY = 0
+    keys_pressed = pygame.key.get_pressed()
+    screen.blit(BackGround,(imgX,imgY))
     pxarray = pygame.PixelArray(screen)
-    if keys_pressed[K_SPACE]:
-        imgY += 5
 
     if keys_pressed[K_UP]:
         Gbolt(BackGround)

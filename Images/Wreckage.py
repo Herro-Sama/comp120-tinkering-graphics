@@ -1,7 +1,7 @@
 import pygame, sys, random, time
 from pygame.locals import *
-
-class Ball:
+# import Magic
+class ParticleGen:
     def __init__(self):
         # Choose a random position
         self.pos_x = random.randrange(0, window_width)
@@ -11,7 +11,7 @@ class Ball:
         self.speed_x = random.randrange(-10, 10)
         self.speed_y = random.randrange(-10, 10)
 
-        # Prevent balls from being stationary or too fast
+        # Prevent ParticleList from being stationary or too fast
         if self.speed_x == 0:
             self.speed_x = random.randrange(-10, 10)
         if self.speed_x > 11:
@@ -52,7 +52,7 @@ class Ball:
         if self.pos_y > window_height:
             self.pos_y = 0
 
-        # Unify the direction balls are traveling
+        # Unify the direction ParticleList are traveling
         if keys_pressed[K_s]:
             self.speed_x = random.randrange (1, 10)
             self.speed_y = random.randrange (1, 10)
@@ -60,7 +60,7 @@ class Ball:
             self.speed_x = random.randrange (-10, 0)
             self.speed_y = random.randrange (-10, 0)
 
-    # Test code to try resize balls
+    # Test code to try resize ParticleList
     def resize(self):
         if keys_pressed[K_d]:
             self.radius = self.radius + 1
@@ -76,7 +76,7 @@ class Ball:
         print "This should never be called"
 
 # Draw the particles on the screen
-class Particle(Ball):
+class Particle(ParticleGen):
     def draw(self):
         pos_x = self.pos_x
         pos_y = self.pos_y
@@ -101,15 +101,15 @@ window_height = 600
 window_size = (window_width, window_height)
 screen = pygame.display.set_mode(window_size)
 BackGround = Background('wreckage.jpg', [0,0])
-# Initialise lists for ball data
-balls = []
+# Initialise lists for Particle data
+ParticleList = []
 
 # Create particles
 num_particles = 3000
-for ball_index in xrange(num_particles):
+for Particle_index in xrange(num_particles):
     shape = random.choice([Particle])
-    new_ball = shape()
-    balls.append(new_ball)
+    new_Particle = shape()
+    ParticleList.append(new_Particle)
 Black = (0,0,0)
 
 # Main loop
@@ -125,10 +125,10 @@ while running:
             running = False
 
     # Clear the screen to black
-    for ball in balls:
-        ball.draw()
-        ball.update()
-        ball.resize()
+    for Particle in ParticleList:
+        Particle.draw()
+        Particle.update()
+        Particle.resize()
 
     # Flip the display and regulate the frame rate
     pygame.display.flip()
